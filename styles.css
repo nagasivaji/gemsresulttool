@@ -1,0 +1,312 @@
+/*
+    Orange  : FF7517
+    Gray    : 3E3939
+    Black   : 2C2727
+    White   : F6F4F4
+    
+    // Status Colors:
+    Green   : 3CCF4E
+    Yellow  : FFDE00
+    Red     : FF1E00
+    Purple  : 8758FF
+    White   : E8F9FD
+    Black   : 000000
+
+
+*/
+
+
+/* ::-webkit-scrollbar {
+    display: none;
+} */
+
+
+/* BODY */
+
+body {
+    font-family: Ubuntu;
+}
+
+
+/* NAVIGATIONBAR CSS */
+
+._navBar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px 100px;
+    box-shadow: 2px 2px 4px gray;
+}
+
+._navBar ._logo {
+    display: flex;
+}
+
+._navBar ._logo div a {
+    text-decoration: none;
+}
+
+._navBar ._logo div img {
+    width: 200px;
+}
+
+._navBar ._logo div a span {
+    margin-top: 10px;
+    font-size: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #3E3939;
+    display: none;
+}
+
+._navBar ._title p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #3E3939;
+}
+
+._navBar ._title p span {
+    font-size: 30px;
+    color: #FF7517;
+    letter-spacing: 1px;
+}
+
+
+/* EXCELFILE INPUT CSS */
+
+._fileInputArea {
+    width: 100%;
+    height: 100px;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+}
+
+._fileInputArea div {
+    width: 50%;
+    border-radius: 6px;
+    outline: 1.5px solid #3E3939;
+}
+
+._fileInputArea div input {
+    outline: none;
+    border: none;
+    color: #3E3939;
+}
+
+._fileInputArea div button {
+    outline: none;
+    border: none;
+    border-left: 1px solid black;
+    background-color: #3E3939;
+    color: #ffffff;
+}
+
+._fileInputArea div button:hover {
+    background-color: #FF7517;
+}
+
+
+/* EXCEL FILE ERROR HANDLEING CSS */
+
+._errorArea {
+    width: 100%;
+    height: 100px;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: rgb(255, 67, 67);
+    font-size: 25px;
+    font-weight: bold;
+    display: none;
+}
+
+
+/* SHEET INPUT AREA */
+
+._sheetInputArea {
+    width: 100%;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 40px;
+}
+
+._sheetInputArea p {
+    font-size: 18px;
+    font-weight: bold;
+    /* margin-left: -40%; */
+}
+
+._sheetInputArea select {
+    width: 50%;
+}
+
+._subjectsArea {
+    width: 100%;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+._subjectsArea div {
+    width: 50%;
+}
+
+
+/* HTML TBALE AREA */
+
+._htmlTableArea {
+    padding: 50px 50px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    /* overflow: scroll; */
+}
+
+._htmlTableArea table {
+    font-size: 13px;
+}
+
+._htmlTableArea table th {
+    background-color: black;
+    color: white;
+    font-weight: lighter;
+    font-size: 13px;
+}
+
+
+/* ._htmlTableArea table tr th:hover {
+    color: #FF7517;
+} */
+
+._htmlTableArea table .passRow {
+    background-color: #3CCF4E;
+}
+
+._htmlTableArea table .failRow {
+    background-color: #FF1E00;
+}
+
+._htmlTableArea table .pendingRow {
+    background-color: #FFDE00;
+}
+
+._htmlTableArea table .notAppearedRow {
+    background-color: #8758FF;
+}
+
+._htmlTableArea table tr td {
+    font-size: 13px;
+    /* font-weight: bold; */
+    color: #000000;
+}
+
+
+/* SEARCH AREA */
+
+._searchInputArea {
+    width: 100%;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    display: none;
+    margin-top: 30px;
+}
+
+._searchInputArea select {
+    width: 20%;
+    margin-top: -10px;
+    margin-right: 10px;
+}
+
+._searchInputArea div {
+    width: 30%;
+    margin-top: 3px;
+}
+
+._searchInputArea div span {
+    cursor: pointer;
+}
+
+._searchInputArea p {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+._searchInputArea span {
+    margin-left: 5px;
+}
+
+
+/* HTML SEARCH RESULT TBALE  */
+
+._searchResultArea {
+    padding: 50px 50px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    /* overflow: scroll; */
+}
+
+._searchResultArea p {
+    font-size: 30px;
+}
+
+._searchResultArea table {
+    font-size: 13px;
+}
+
+._searchResultArea table th {
+    background-color: black;
+    color: white;
+    font-weight: lighter;
+    font-size: 13px;
+}
+
+
+/* ._htmlTableArea table tr th:hover {
+    color: #FF7517;
+} */
+
+._searchResultArea table .passRow {
+    background-color: #3CCF4E;
+}
+
+._searchResultArea table .failRow {
+    background-color: #FF1E00;
+}
+
+._searchResultArea table .pendingRow {
+    background-color: #FFDE00;
+}
+
+._searchResultArea table .notAppearedRow {
+    background-color: #8758FF;
+}
+
+._searchResultArea table tr td {
+    font-size: 13px;
+    /* font-weight: bold; */
+    color: #000000;
+}
