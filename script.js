@@ -434,8 +434,12 @@ function getStudentsObjects() {
                 // getting subject object
                 var subject = studentMarks[k];
 
+                // Neglecting the subject if its has passmark zero
+                if(subject.subjectMarks === 0)
+                    continue;
+
                 // then its subjective
-                if (subject.subjectName.toLowerCase("subjective")) {
+                if (subject.subjectName.toLowerCase().includes("subjective")) {
                     subMarks = subject.subjectMarks;
                 }
                 else // then its objective
@@ -448,7 +452,7 @@ function getStudentsObjects() {
             finalMarks = Math.round(finalMarks);
         }
 
-
+        
 
 
         // creating new studemt object
