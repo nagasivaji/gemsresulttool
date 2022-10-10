@@ -15,10 +15,9 @@
 
 */
 
-
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
     display: none;
-} */
+}
 
 
 /* BODY */
@@ -210,6 +209,10 @@ body {
     background-color: #8758FF;
 }
 
+._htmlTableArea table .partialRow {
+    background-color: #ff6b6b;
+}
+
 ._htmlTableArea table tr td {
     font-size: 13px;
     /* font-weight: bold; */
@@ -305,8 +308,15 @@ body {
     background-color: #8758FF;
 }
 
+._searchResultArea table .partialRow {
+    background-color: #ff6b6b;
+}
+
 ._searchResultArea table tr td {
     font-size: 13px;
     /* font-weight: bold; */
     color: #000000;
 }
+
+
+/* Excel Exception  */

@@ -1,3 +1,32 @@
+// Horizontal drag 
+const slider = document.getElementById('htmlTableArea');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+slider.addEventListener('mousedown', (e) => {
+    isDown = true;
+    slider.classList.add('active');
+    startX = e.pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+});
+slider.addEventListener('mouseleave', () => {
+    isDown = false;
+    slider.classList.remove('active');
+});
+slider.addEventListener('mouseup', () => {
+    isDown = false;
+    slider.classList.remove('active');
+});
+slider.addEventListener('mousemove', (e) => {
+    if(!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 3; //scroll-fast
+    slider.scrollLeft = scrollLeft - walk;
+    //console.log(walk);
+    });
+
 //Accessing Process Button
 const processFileBtn = document.getElementById("processFileBtn");
 // Accessing file input
@@ -30,6 +59,8 @@ var students = [];
 // Assessments index array
 var indexes = [];
 
+// Map for calculating the toppers
+var marksMap = new Map();
 
 
 // Getting data in required sheet from excel file
@@ -202,6 +233,7 @@ function showSubjects() {
     claculateBtn.addEventListener("click", () => {
         getPassMarks();
         getStudentsObjects();
+        calculateRanks();
         prepareHTMLTable(students);
         showSearchArea();
     });
@@ -267,8 +299,11 @@ class Student {
     subjectiveStatus;
     finalStatus;
     finalMarks;
+    grade;
+    partialStatus;
+    rank;
 
-    constructor(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus, finalStatus, finalMarks) {
+    constructor(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus, finalStatus, finalMarks, grade, partialStatus, rank) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.studentEmail = studentEmail;
@@ -277,6 +312,9 @@ class Student {
         this.subjectiveStatus = subjectiveStatus;
         this.finalStatus = finalStatus;
         this.finalMarks = finalMarks;
+        this.grade = grade;
+        this.partialStatus = partialStatus;
+        this.rank = rank;
     }
 }
 
@@ -303,6 +341,9 @@ function getStudentsObjects() {
 
     // creating new students array
     students = [];
+
+    //creating new map for ranks
+    marksMap = new Map();
 
     // getting data from required sheet in excel file
     var sheetData = getSheetData();
@@ -404,8 +445,10 @@ function getStudentsObjects() {
 
 
         // Conditions for finalstatus and sinal marks
-        // required varibale for students status
+        // required varibale for students status 
         var finalStatus, finalMarks;
+        // final grade for student
+        var grade = "NA"
 
         // Condtion for student to FAIL
         if (objectiveStatus == 'FAIL' || subjectiveStatus == 'FAIL') {
@@ -426,7 +469,7 @@ function getStudentsObjects() {
         else {
 
             finalStatus = 'PASS';
-            var objMarks = 0, subMarks = 0;
+            var objMarks = 0, subMarks = 0, subjectCount = 0;
 
             // Iterating through  students sbjets array
             for (var k = 0; k < studentMarks.length; k++) {
@@ -435,7 +478,7 @@ function getStudentsObjects() {
                 var subject = studentMarks[k];
 
                 // Neglecting the subject if its has passmark zero
-                if(subject.subjectMarks === 0)
+                if(subject.subjectPassMark == 0)
                     continue;
 
                 // then its subjective
@@ -445,21 +488,39 @@ function getStudentsObjects() {
                 else // then its objective
                 {
                     objMarks += subject.subjectMarks;
+                    subjectCount++;
                 }
             }
 
-            finalMarks = ((objMarks / (studentMarks.length - 1)) + (subMarks)) / 2;
+            //console.log(objMarks, subMarks);
+
+            finalMarks = ((objMarks / subjectCount) + (subMarks)) / 2;
             finalMarks = Math.round(finalMarks);
+
+            // Calculating Grade
+            grade = getGrade(finalMarks);
         }
 
-        
+
+
+        //If student fails.. calculating partialStatus condition 
+        var partialStatus = "NA";
+        if(finalStatus === "FAILED"){
+            partialStatus = getPartialStatus(studentMarks);
+        }
 
 
         // creating new studemt object
-        var obj = new Student(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus, finalStatus, finalMarks);
+        var obj = new Student(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus, finalStatus, finalMarks, grade, partialStatus, "--");
 
         // pushing the new student object to the list of students
         students.push(obj);
+
+        // Updating map
+        if(finalStatus === "PASS")
+            marksMap.set(studentId, finalMarks);
+        else
+        marksMap.set(studentId, 0);
     }
     //console.log(students);
 }
@@ -479,6 +540,55 @@ function validate(marks, attempts, criteria) {
         return "NA";
 }
 
+//Grade validation function 
+function getGrade(marks){
+    if(marks >= 90)
+        return "A+"
+    else if(marks >= 80)
+        return  "A";
+    else if(marks >= 70)
+        return "B";
+    else 
+        return "F"
+}
+
+// getting partialStatus
+function getPartialStatus(studentMarks){
+    // Iterating through  students sbjets array
+    for (var k = 0; k < studentMarks.length; k++) {
+
+        // getting subject object
+        var subject = studentMarks[k];
+
+        // Neglecting the subject if its has passmark zero
+        if(subject.subjectPassMark === 0)
+            continue;
+
+        if(subject.subjectMarks < 60 )
+            return "NO";
+
+        // log
+        //console.log(subject.subjectMarks);
+    }
+    //console.log("-----");
+    return "YES";
+}
+
+// calculating student ranks
+function calculateRanks(){
+    var  map= new Map([...marksMap.entries()].sort((a,b) => b[1] - a[1]));
+    //console.log(map);
+    //console.log(students);
+    var tempRank = 1;
+    for (const [key, value] of map) {
+        //console.log(key, value);
+        for(var i=0;i<students.length;i++) {
+            if(students[i].studentId === key && students[i].finalStatus === "PASS")
+                students[i].rank = "Topper "+ tempRank++;
+        }
+    }
+    //console.log(students);
+}
 
 // preparing html tbale
 function prepareHTMLTable() {
@@ -493,15 +603,18 @@ function prepareHTMLTable() {
     var tableStart = `<table class="table" id="htmlResultTable">`;
 
 
-
+    //console.log(headings);
     //table Headings -> id, name, mail, subjects...
     // Openinig row
     var tableHeadings = `<tr>`;
     for (var i = 0; i < headings.length; i++) {
         if (i < 3)
             tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
-        else
-            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i - 3]}</th>`;
+        else{
+            // tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i - 3]}</th>`;
+            tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
+            tableHeadings = tableHeadings + `<th>Attemps</th>`;
+        }
     }
 
     // Objective status
@@ -512,6 +625,10 @@ function prepareHTMLTable() {
     tableHeadings = tableHeadings + `<th>Final Status</th>`;
     // Finak Marks
     tableHeadings = tableHeadings + `<th>Final Marks</th>`;
+    // Grade
+    tableHeadings = tableHeadings + `<th>Grade</th>`;
+    // Rank
+    tableHeadings = tableHeadings + `<th>Rank</th>`;
     // Closing row
     tableHeadings = tableHeadings + `</tr>`;
 
@@ -526,12 +643,16 @@ function prepareHTMLTable() {
         var tempRow = ``;
         if (students[i].finalStatus === 'PASS')
             tempRow = tempRow + `<tr class="passRow">`;
+        else if (students[i].finalStatus === 'FAILED' && students[i].partialStatus === 'YES')
+            tempRow = tempRow + `<tr class="partialRow">`;
         else if (students[i].finalStatus === 'FAILED')
             tempRow = tempRow + `<tr class="failRow">`;
         else if (students[i].finalStatus === 'PENDING')
             tempRow = tempRow + `<tr class="pendingRow">`;
         else
             tempRow = tempRow + `<tr class="notAppearedRow">`;
+        
+    
 
 
         // creating col tags for student data
@@ -546,7 +667,9 @@ function prepareHTMLTable() {
         for (var j = 0; j < students[i].studentMarks.length; j++) {
             tempRow = tempRow + `<td>
                                     ${students[i].studentMarks[j].subjectMarks}
-                                    -
+                                </td>`;
+
+            tempRow = tempRow + `<td>
                                     ${students[i].studentMarks[j].subjectAttempts}
                                 </td>`;
         }
@@ -560,8 +683,14 @@ function prepareHTMLTable() {
         // 7.Student Final Status
         tempRow = tempRow + `<td>${students[i].finalStatus}</td>`;
 
-        // 7.Student Final Marks
+        // 8.Student Final Marks
         tempRow = tempRow + `<td>${students[i].finalMarks}</td>`;
+
+        // 9.Student Final Marks
+        tempRow = tempRow + `<td>${students[i].grade}</td>`;
+
+        // 10.Student Final Marks
+        tempRow = tempRow + `<td>${students[i].rank}</td>`;
 
         // closing row tag
         tempRow = tempRow + '</tr>';
@@ -678,7 +807,7 @@ function prepareHTMLSearchTable(searchStudents) {
         if (i < 3)
             tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
         else
-            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i - 3]}</th>`;
+            tableHeadings = tableHeadings + `<th">${headings[i]} <br> ${passMarks[i - 3]}</th>`;
     }
 
     // Objective status
@@ -771,8 +900,10 @@ function downloadExcelFile() {
 
     function html_table_to_excel(type) {
         var data = document.getElementById('htmlResultTable');
+        console.log(data);
 
         var file = XLSX.utils.table_to_book(data, { sheet: "sheet1" });
+        console.log(file);
         XLSX.write(file, { bookType: type, bookSST: true, type: 'base64' });
         XLSX.writeFile(file, 'Exco Result.' + type);
 
